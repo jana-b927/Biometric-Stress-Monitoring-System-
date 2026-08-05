@@ -1,0 +1,101 @@
+import serial
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtWidgets, QtCore
+from collections import deque
+
+# ------------------------
+# CHANGE THIS IF NEEDED
+# ------------------------
+
+PORT = "COM3"
+BAUD = 9600
+
+arduino = serial.Serial(PORT, BAUD, timeout=1)
+
+app = QtWidgets.QApplication([])
+
+# ------------------------
+# Window
+# ------------------------
+
+win = pg.GraphicsLayoutWidget(show=True,
+                              title="PPG Heart Rate Monitor")
+
+win.resize(1000,700)
+
+# ------------------------
+# Graph
+# ------------------------
+
+plot = win.addPlot(title="Raw vs Smoothed PPG")
+
+plot.showGrid(x=True,y=True)
+
+rawCurve = plot.plot(
+    pen=pg.mkPen('r', width=1),
+    name="Raw"
+)
+
+smoothCurve = plot.plot(
+    pen=pg.mkPen('g', width=2),
+    name="Smoothed"
+)
+
+plot.addLegend()
+
+# ------------------------
+# BPM Display
+# ------------------------
+
+win.nextRow()
+
+bpmLabel = pg.LabelItem(justify='left')
+
+win.addItem(bpmLabel)
+
+# ------------------------
+# Buffers
+# ------------------------
+
+history = 200
+
+rawData = deque([0]*history, maxlen=history)
+smoothData = deque([0]*history, maxlen=history)
+
+# ------------------------
+# Update
+# ------------------------
+
+def update():
+
+    if arduino.in_waiting:
+
+        try:
+
+            line = arduino.readline().decode().strip()
+
+            raw, smooth, bpm = map(float, line.split(","))
+
+            rawData.append(raw)
+            smoothData.append(smooth)
+
+            rawCurve.setData(rawData)
+            smoothCurve.setData(smoothData)
+
+            if bpm > 0:
+                bpmLabel.setText(
+                    f"<span style='font-size:28pt'>❤️ BPM: {bpm:.1f}</span>"
+                )
+            else:
+                bpmLabel.setText(
+                    "<span style='font-size:28pt'>❤️ BPM: --</span>"
+                )
+
+        except:
+            pass
+
+timer = QtCore.QTimer()
+timer.timeout.connect(update)
+timer.start(20)
+
+QtWidgets.QApplication.instance().exec()
