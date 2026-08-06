@@ -1,7 +1,7 @@
-# Biometric-Stress-Monitoring-System-
+# Biometric Stress Monitoring System
 Multi-sensor embedded system using sensors on skin response, heart rate, and muscle tension to monitor, estimate, and display physiological arousal associated with stress. The project utilizes a photoplethysmography sensor (estimates blood volume associated with a heartbeat), galvanic skin response (measures human resistance through skin sweat conductivity), an electromyography sensor (measures muscle electrical activity) and an Arduino microcontroller to process and estimate stress from all three sensors. Metrics contributing to the estimated results are shown in a visual Python display and final results are represented physically through simple LED lights (green for relaxed, yellow for alert, and red for stressed).
 
-# **Hardware Materials and Budget: **
+# Hardware Materials and Budget: 
 - Arduino UNO R4 Minima $20
 - HiLetgo 5pcs 5V Heartbeat Detect PPG Sensor $7
 - Grove Seeed Studio GSR Sensor $12
@@ -16,7 +16,7 @@ Other materials:
 - Breadboard
 - USB cord 
 
-# **General algorithm pipeline: **
+# General algorithm pipeline:
 - Initialize everything
 - Read sensor
 - Filter signal
@@ -24,7 +24,7 @@ Other materials:
 - Classify and send to LED
 - If using python display print metrics to be parsed and displayed otherwise print and plot on Arduino
 
-# **Signal processing for each sensor: **
+# Signal processing for each sensor:
 **PPG:** general smoothing (moving mean), peak detection, bpm calculation, fixed thresholds 
 
 **GSR:** general smoothing (moving mean), find baseline continuously, find dips, mark threshold as a percentage 
@@ -38,7 +38,7 @@ Integrated Sensors: The integrated sensor algorithm works the same way as the ot
 Python Display: The Python display was built to more clearly and easily visualize a chaotic amount of data. The algorithm first parses the data given by the Arduino and plots a graph for each sensor to visualize important information and a final report: the raw and smoothed signals as well as any other calculated features and final metrics such as the baselines, BPM, amplitudes, and overall stress score/ state. 
 
 
-# **Future Improvements: **
+# Future Improvements: 
 --> actively working on 
 - working on a custom pcb to replace temporary breadboard and actually wearable
 
@@ -51,12 +51,12 @@ Python Display: The Python display was built to more clearly and easily visualiz
 - implement more specific and experimented on/ researched thresholds instead of relying one singular individual's testing
 - use machine learning to extract features instead of fixed thresholds
 
-# **Applications: **
+# Applications: 
 - personal and medical stress management thru consistent awareness
 - nonverbal individual ability to express simple visual stress levels - inexpensive and accessible
 - research on biometric stress estimation 
 
-# **Limitations: **
+# Limitations: 
 - technically stress estimation of physiological arousal instead of direct stress measurement because of many different factors potentially affecting results - excessive movement, exercise, caffeine, excitement etc. 
 - sensor accuracy (cheaply and simply made)
 - movement makes signals very noisy and placement of sensors on the body also affects results
