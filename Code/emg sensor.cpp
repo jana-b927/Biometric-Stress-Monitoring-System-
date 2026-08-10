@@ -89,13 +89,11 @@ if(millis() < baselineTime)
     return;
 }
 
-
 //calculate baseline after 2 seconds
 if(rmsBaseline == 0)
 {
     rmsBaseline = baselineSum / baselineSamples;
 }
-
 
 //muscle activation
 float activation = rmsValue - rmsBaseline;
@@ -138,5 +136,4 @@ Serial.print("Activation:");
 Serial.println(activation);
 
 delay(10);
-
 }
