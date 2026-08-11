@@ -8,7 +8,7 @@ from matplotlib.animation import FuncAnimation
 # ---------------- Configuration ----------------
 
 PORT = "COM3"
-BAUD = 9600
+BAUD = 115200
 BUFFER_LEN = 100
 
 STATE_NAMES = {

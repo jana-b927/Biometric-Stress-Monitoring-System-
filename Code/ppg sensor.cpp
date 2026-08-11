@@ -1,7 +1,7 @@
 //heartbeat sensor algorithm
  
 //wiring setup for pins and leds 
-const int ppgPin = A0;
+const int ppgPin = A1;
 const int greenLED = 2;
 const int yellowLED = 3;
 const int redLED = 4;
@@ -27,12 +27,11 @@ float averageBPM = 0;
 
 //adaptive threshold setup
 const int minPeakDist = 300; 
-const int minPeakDifference = .75;
+const float minPeakDifference = .05;
 
 //fixed thresholds on known resting or elevated bpms
 const int max_rest = 90;
 const int elev = 120; 
-
 
 void setup()
 {
@@ -76,16 +75,12 @@ void loop()
     next = smoothValue;
 
     //detect peaks
-    if(curr > prev &&
-       curr > next &&
-       curr - prev > minPeakDifference &&
-       curr - next > minPeakDifference)
+    if((curr > prev ) && (curr > next ) && (curr - prev > minPeakDifference ) && (curr - next > minPeakDifference))
     {
         unsigned long currTime = millis();
-    // make sure peaks are far enough apart
+    //make sure peaks are far enough apart
         if(currTime - prevPeak > minPeakDist)
         {
-
             // calculate BPM after first peak
             if(prevPeak != 0)
             {
@@ -93,31 +88,24 @@ void loop()
 
                 bpm = 60000.0 / intv;
 
-
                 // moving average of BPM
                 bpmSum -= bpmHistory[bpmIndex];
-
                 bpmHistory[bpmIndex] = bpm;
-
                 bpmSum += bpmHistory[bpmIndex];
-
                 bpmIndex++;
 
                 if(bpmIndex >= bpmWindow)
                     bpmIndex = 0;
 
-
                 averageBPM = bpmSum / bpmWindow;
             }
-
 
             // save current peak time
             prevPeak = currTime;
         }
     }
 
-
-    // LED thresholds (now runs every loop, not just on peak)
+    // LED thresholds
     digitalWrite(greenLED, LOW);
     digitalWrite(yellowLED, LOW);
     digitalWrite(redLED, LOW);
@@ -140,14 +128,20 @@ void loop()
 
 
     //plot and print 
+    Serial.print("Raw:");
+    Serial.print(raw);
+
+    Serial.print(",");
+
+    Serial.print("Smoothed:");
+    Serial.print(smoothValue);
+
     
-Serial.print("Raw:");
-Serial.print(raw);
+    Serial.print(",");
 
-Serial.print(",");
-
-Serial.print("Smoothed:");
-Serial.println(smoothValue);
+    Serial.print("bpm:");
+    Serial.println(averageBPM);
+    
 
 
 

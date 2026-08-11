@@ -1,16 +1,16 @@
 //integrated stress detection: PPG + GSR + EMG -> single 3-LED readout
 
 //---- pins ----
-const int ppgPin = A0;
-const int gsrPin = A1;
-const int emgPin = A2;
+const int ppgPin = A1;
+const int gsrPin = A2;
+const int emgPin = A0;
 
 const int greenLED = 2;
 const int yellowLED = 3;
 const int redLED = 4;
 
 //========== initialize PPG (heartbeat) ==========
-const int ppgWindowSize = 5;  //potentially subject to change * comment
+const int ppgWindowSize = 10;  //potentially subject to change * comment
 int ppgSamples[ppgWindowSize];
 int ppgSampleIndex = 0;
 long ppgSampleSum = 0;
@@ -27,14 +27,8 @@ int bpmIndex = 0;
 float bpmSum = 0;
 float averageBPM = 0;
 
-float minPeakHeight = 0;
-float fractionHeight = .6;
 const int minPeakDist = 300;
-
-const int peakWindow = 5; 
-float peakSamples[peakWindow];
-int peakSampleIndex = 0;
-float peakSampleSum = 0;
+const float minPeakDifference = .05;
 
 const float ppgMaxRest = 90;
 const float ppgElev = 120;
@@ -66,7 +60,10 @@ float drift = 0;
 const float driftAlpha = 0.01;
 
 float rmsBaseline = 0;
-const float rmsBaselineAlpha = 0.01;
+
+float baselineSum_emg = 0;
+int baselineSamples_emg = 0;
+const unsigned long baselineTime_emg = 2000;
 
 const float threshold1_emg = 0.3; //potentially subject to change * comment
 const float threshold2_emg = 0.6; //potentially subject to change * comment
@@ -91,7 +88,6 @@ void setup()
     for (int i = 0; i < gsrWindowSize; i++) { gsrSamples[i] = 0; }
     for (int i = 0; i < emgWindowSize; i++) { emgSquaredSamples[i] = 0; }
     for (int i = 0; i < bpmWindow; i++) { bpmHistory[i] = 0; }
-    for (int i = 0; i < peakWindow; i++) { peakSamples[i] = 0; }
 }
 
 void loop()
@@ -148,38 +144,26 @@ void loop()
     float dipAmplitude = gsrBaseline - gsrSmooth;
     if (dipAmplitude < 0) { dipAmplitude = 0; }
 
-    //EMG RMS baseline + activation
-    if (rmsBaseline == 0) { rmsBaseline = emgRMS; }
-    else { rmsBaseline = rmsBaseline + rmsBaselineAlpha * (emgRMS - rmsBaseline); }
+    //EMG RMS baseline calibration (first 2 seconds), then fixed baseline
+    if (now < baselineTime_emg)
+    {
+        baselineSum_emg += emgRMS;
+        baselineSamples_emg++;
+    }
+    else if (rmsBaseline == 0)
+    {
+        rmsBaseline = baselineSum_emg / baselineSamples_emg;
+    }
 
     float activation = emgRMS - rmsBaseline;
     if (activation < 0) {activation = 0;}
 
     //PPG peak detection + BPM (updates ppgState when a peak completes)
-    if (ppgCurr > ppgPrev && ppgCurr > ppgNext)
+    if (ppgCurr > ppgPrev && ppgCurr > ppgNext &&
+        ppgCurr - ppgPrev > minPeakDifference && ppgCurr - ppgNext > minPeakDifference)
     {
-        if (ppgCurr > minPeakHeight && now - prevPeak > minPeakDist)
+        if (now - prevPeak > minPeakDist)
         {
-            if (minPeakHeight < 2) 
-            {
-                for (int i = 0; i < peakWindow; i++)
-                {
-                    peakSamples[i] = ppgCurr;
-                    peakSampleSum += ppgCurr;
-                }
-            }
-            else
-            {
-                peakSampleSum -= peakSamples[peakSampleIndex];
-                peakSamples[peakSampleIndex] = ppgCurr;
-                peakSampleSum += peakSamples[peakSampleIndex];
-                peakSampleIndex++;
-                if (peakSampleIndex >= peakWindow) peakSampleIndex = 0;
-            }
-
-            float avgPeakHeight = peakSampleSum / peakWindow;
-            minPeakHeight = avgPeakHeight * fractionHeight;
-
             if (prevPeak != 0)
             {
                 unsigned long intv = now - prevPeak;
@@ -246,7 +230,7 @@ void loop()
     if (stressScore < threshold1_overall){overallState = 0;}      // Green}
     else if (stressScore < threshold2_overall) {overallState = 1;}      // Yellow}
     else{overallState = threshold3_overall; }     // Red
-
+}
     //---- 7. Update LEDs ----
     digitalWrite(greenLED, LOW);
     digitalWrite(yellowLED, LOW);
