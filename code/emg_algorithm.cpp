@@ -89,9 +89,6 @@ if(millis() < baselineTime)
     return;
 }
 
-
-
-
 //calculate baseline after 2 seconds
 if(rmsBaseline == 0)
 {
@@ -104,7 +101,7 @@ float activation = rmsValue - rmsBaseline;
 if(activation < 0)
     activation = 0;
 
-//LEDs add comment
+//LEDs 
 digitalWrite(greenLED, LOW);
 digitalWrite(yellowLED, LOW);
 digitalWrite(redLED, LOW);
