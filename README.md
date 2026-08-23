@@ -56,9 +56,10 @@ Python Display: The Python display was built to more clearly and easily visualiz
 - use machine learning to extract features instead of fixed thresholds
 
 # Applications: 
-- personal and medical stress management thru consistent awareness
+- personal and medical stress management through live feedback and awareness
 - nonverbal individual ability to express simple visual stress levels - inexpensive and accessible
-- research on biometric stress estimation 
+- research on biometric stress estimation
+- research on individual stress management
 
 # Limitations: 
 - technically stress estimation of physiological arousal instead of direct stress measurement because of many different factors potentially affecting results - excessive movement, exercise, caffeine, excitement etc. 
