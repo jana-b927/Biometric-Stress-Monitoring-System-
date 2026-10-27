@@ -44,16 +44,16 @@ Python Display: The Python display was built to more clearly and easily visualiz
 
 # Future Improvements: 
 --> actively working on 
-- working on a custom pcb to replace temporary breadboard and actually wearable
+- working on a custom pcb to replace the temporary breadboard and have the device be actually wearable
 
---> others to consider
-- wireless communication instead of arduino connected to laptop - app to visually display stress less technically (not through graphs) 
-- change emg sensor placement and different integration of sensors to be more stress accurate instead of general estimation
+--> others improvements to consider
+- wireless communication instead of having an arduino connected to by usb to laptop -- possible develop an pp to visually display stress less technically (not through graphs) 
+- change emg sensor placement and different integration of sensors to be more technically "stress accurate" instead of a general estimation
 - better quality and resolution hardware
 - more advanced software filtering
-- extract more features from each signal to take into account
+- extract more features from each signal to take into account in the final estimation
 - implement more specific and experimented on/ researched thresholds instead of relying one singular individual's testing
-- use machine learning to extract features instead of fixed thresholds
+- use machine learning to extract features instead of depending on rigid, fixed thresholds
 
 # Applications: 
 - personal and medical stress management through live feedback and awareness
