@@ -41,6 +41,7 @@ Integrated Sensors: The integrated sensor algorithm works the same way as the ot
 
 Python Display: The Python display was built to more clearly and easily visualize a chaotic amount of data. The algorithm first parses the data given by the Arduino and plots a graph for each sensor to visualize important information and a final report: the raw and smoothed signals as well as any other calculated features and final metrics such as the baselines, BPM, amplitudes, and overall stress score/ state. 
 
+*To view the testing videos, click "view raw" to download them
 
 # Future Improvements: 
 --> actively working on 
